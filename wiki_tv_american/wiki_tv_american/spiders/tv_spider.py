@@ -20,7 +20,7 @@ class TVSpider(Spider):
 			"//a[starts-with(@href, '/wiki/')]/@href").extract()
 
 		# pick random URLs
-		#urls = np.random.choice(urls,20, replace=False)
+		#urls = np.random.choice(urls,10, replace=False)
 
 		# follow URL to get show details
 		for url in urls:

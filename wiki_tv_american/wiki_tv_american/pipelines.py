@@ -6,10 +6,16 @@
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from scrapy.exporters import CsvItemExporter
 from wiki_tv_american.helpers import *
+from datetime import datetime as dt
 
 class CleanAndValidateItemPipeline(object):
 	def __init__(self):
-		self.filename = 'error2.log'
+		self.filename = ("{dir}/{name}_{date}.{ext}".format(
+			dir = "output",
+			name = "error",
+			date = dt.now().strftime("%Y%m%d_%H%M"),
+			ext = "log"
+		))
 
 	def open_spider(self, spider):
 		self.errfile = open(self.filename, 'wb')
@@ -35,7 +41,12 @@ class CleanAndValidateItemPipeline(object):
 
 class WriteItemPipeline(object):
 	def __init__(self):
-		self.filename = 'tvshows2.csv'
+		self.filename = ("{dir}/{name}_{date}.{ext}".format(
+			dir = "output",
+			name = "tvshows",
+			date = dt.now().strftime("%Y%m%d_%H%M"),
+			ext = "csv"
+		))
 		
 	def open_spider(self, spider):
 		self.csvfile = open(self.filename, 'wb')
