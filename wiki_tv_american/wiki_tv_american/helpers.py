@@ -9,7 +9,7 @@ year_re = re.compile("\d{4}")
 month_re = re.compile("[a-zA-Z]+")
 day_re = re.compile("\d{1,2}")
 
-def raise_drop_item(file, url, items, message):
+def raise_drop_item(file, items, message):
 	file.write( "{0}\n{1}\n\n".format(message, items) )
 	raise DropItem(message)
 

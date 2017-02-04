@@ -29,7 +29,7 @@ class CleanAndValidateItemPipeline(object):
 				item["end_date"] = date["end"]
 				return item
 			except:
-				raise_drop_item(self.errfile, item["url"], item, "could not set item dictionary...")
+				raise_drop_item(self.errfile, item, "could not set item dictionary...")
 
 
 
