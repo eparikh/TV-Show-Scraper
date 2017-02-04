@@ -5,7 +5,7 @@ from wiki_tv_american.items import TVItem
 from wiki_tv_american.helpers import *
 
 # solely for sampling for test runs
-import numpy as np
+#import numpy as np
 
 class TVSpider(Spider):
 	name = "tv_spider"
@@ -20,7 +20,7 @@ class TVSpider(Spider):
 			"//a[starts-with(@href, '/wiki/')]/@href").extract()
 
 		# pick random URLs
-		urls = np.random.choice(urls,20, replace=False)
+		#urls = np.random.choice(urls,20, replace=False)
 
 		# follow URL to get show details
 		for url in urls:
