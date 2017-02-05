@@ -1,4 +1,4 @@
-*.log
-*.csv
 *.idea/
 *.pyc
+*output/
+*input/
