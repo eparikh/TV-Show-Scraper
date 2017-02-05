@@ -19,6 +19,11 @@ class TVSpider(Spider):
 		urls = response.xpath("//h3//following-sibling::ul" + \
 			"//a[starts-with(@href, '/wiki/')]/@href").extract()
 
+		# to manually read urls from a filed
+		# with open("input/urls.csv", "r") as f:
+		# 	urls = [line.strip() for line in f.readlines()]
+
+
 		# pick random URLs
 		#urls = np.random.choice(urls,10, replace=False)
 
@@ -27,6 +32,10 @@ class TVSpider(Spider):
 			yield (scrapy.Request(response.urljoin(url),
 				callback=self.parse_tv_show)
 			)
+			#for manual URLs
+			# yield (scrapy.Request(url,
+			# 	callback=self.parse_tv_show)
+			# )
 
 
 	def parse_tv_show(self, response):
@@ -77,7 +86,7 @@ class TVSpider(Spider):
 				).extract()
 			)
 
-			(start_date, end_date) = clean_dates(dates)
+			(start_date, end_date) = clean_dates(dates, info_table)
 
 
 			# if there is an exception, only a url will be passed in except block

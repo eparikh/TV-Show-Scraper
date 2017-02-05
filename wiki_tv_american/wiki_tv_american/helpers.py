@@ -1,5 +1,6 @@
 import re
 from scrapy.exceptions import DropItem
+from scrapy.selector import Selector
 
 
 ### REGEX PATTERNS
@@ -59,19 +60,18 @@ def process_running_time(running_time):
 		return 0.5 * (rt1 + rt2)
 
 
-def clean_dates(dates):
+def clean_dates(dates, info_table):
 	# if len of [] != 2
 	# both dates are in one string
 	# or the start date is in a span
 	if len(dates) == 1 and u'\u2013' in dates[0]:
 		(start_date, end_date) = dates[0].split(u'\u2013')
-
-	elif len(dates) == 1:
-		start_date = (Selector(text=info_table).xpath(
-			"//*[th='Original release']//following-sibling::td/span/text()"
-			).extract()[1]
-		)
-		end_date = dates[0]
+		if num_re.search(start_date) == None:
+			start_date = (Selector(text=info_table).xpath(
+				"//*[th='Original release']//following-sibling::td/span/text()"
+				).extract()[1]
+			)
+		#end_date = dates[0]
 
 	elif len(dates) == 2:
 		(start_date, end_date) = dates
