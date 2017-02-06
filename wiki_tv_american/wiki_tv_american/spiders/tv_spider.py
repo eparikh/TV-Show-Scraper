@@ -10,14 +10,21 @@ from wiki_tv_american.helpers import *
 class TVSpider(Spider):
 	name = "tv_spider"
 	allowed_urls = ["en.wikipedia.org/"]
-	start_urls = ["https://en.wikipedia.org/" \
-		+ "wiki/List_of_American_television_programs_by_date"]
+
+	# start_url 1
+	#start_urls = ["https://en.wikipedia.org/wiki/List_of_American_television_programs_by_date"]
+
+	# start_url 2
+	start_urls = ["https://en.wikipedia.org/wiki/List_of_American_television_series"]
 
 	def parse(self, response):
-		# narrowed as much as I could.
-		# will end up hitting some irrelevant links
-		urls = response.xpath("//h3//following-sibling::ul" + \
-			"//a[starts-with(@href, '/wiki/')]/@href").extract()
+
+		# tv show urls from start_url 1
+		# urls = response.xpath("//h3//following-sibling::ul" + \
+		# 	"//a[starts-with(@href, '/wiki/')]/@href").extract()
+
+		# tv show urls from start_url 2
+		urls = response.xpath("//i//a/@href").extract()
 
 		# to manually read urls from a filed
 		# with open("input/urls.csv", "r") as f:
