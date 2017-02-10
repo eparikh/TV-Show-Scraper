@@ -1,6 +1,7 @@
-*.idea/
+*idea/
 *output/
 *input/
+*processing/
 
 *.pyc
 *.txt
