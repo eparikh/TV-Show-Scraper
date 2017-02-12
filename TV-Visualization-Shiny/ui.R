@@ -6,7 +6,9 @@ suppressMessages({
 shinyUI(fluidPage(
   
   titlePanel("TV Show Explorer"),
-  
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "app.css")
+  ),
   fluidRow(
     column(
       12,
