@@ -1,5 +1,6 @@
 # TV-Show-Scraper
-Scrapes American TV shows from Wikipedia and uses IMDbPY to grab extra information.
+Scrapes American TV shows from Wikipedia using scrapy.
+Grabs additional information using IMDbPY.
 
 Visualizes the collected data in R-Shiny.
 
