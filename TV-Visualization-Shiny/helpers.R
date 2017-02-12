@@ -22,7 +22,7 @@ getFacetPlotsAndData <- function(){
     network_count = createFacetPlot(data$network, "Year", "Count", "Network"),
     network_rating = createFacetPlot(data$network, "Year", "Median Rating", "Network"),
     network_years = createFacetPlot(data$network, "Year", "Median Number of Years", "Network"),
-    genre_all = data$genre_all,
+    all_data = data$genre_all,
     namedColors = namedColors,
     genre_data = data$genre,
     network_data = data$network
@@ -62,10 +62,11 @@ getData <- function(){
         Genre=genre,
         Title=title,
         Network=original_network,
-        "Running Time" = running_time,
+        `Number of Years` = num_years,
         Rating = rating,
         Votes = votes
-      )
+      ) %>%
+      filter(!is.na(Rating))
   ))
 }
 

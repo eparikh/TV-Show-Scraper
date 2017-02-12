@@ -1,5 +1,6 @@
 suppressMessages({
   library(shiny)
+  library(DT)
 })
 
 shinyUI(fluidPage(
@@ -46,5 +47,11 @@ shinyUI(fluidPage(
       6,
       plotOutput("detailPlot", height = "600px")
     )
-  )# end row
+  ),# end row
+  fluidRow(
+    column(
+      12,
+      dataTableOutput("dataTable")
+    )
+  )
 ))

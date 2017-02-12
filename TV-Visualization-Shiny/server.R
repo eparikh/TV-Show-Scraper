@@ -1,5 +1,6 @@
 suppressMessages({
-library(shiny)
+  library(shiny)
+  library(DT)
 })
 
 source("helpers.R")
@@ -14,14 +15,14 @@ shinyServer(function(input, output){
   # set detailPlot$data = NULL if the plot changes
   # only want data for detailPlot to be retrieved when a plot is zoomed
   observeEvent(thePlot(),{
-    detailPlot$data <- NULL
+    detailPlot$title <- NULL
   })
   
   # plot the master scatter plot w/ facet wrap
   output$facetPlot <- renderPlot(thePlot())
   
   output$detailPlot <- renderPlot({
-    if(!is.null(detailPlot$data)){
+    if(!is.null(detailPlot$title)){
       getDetailPlot(
         detailPlot$data,
         detailPlot$title,
@@ -52,7 +53,7 @@ shinyServer(function(input, output){
     if (!is.null(brush)) {
       detailPlot$xAxis = brush$mapping$x
       detailPlot$yAxis = brush$mapping$y
-      detailPlot$xRange = c(brush$xmin, brush$xmax)
+      detailPlot$xRange = c(round(brush$xmin), round(brush$xmax))
       detailPlot$yRange = c(brush$ymin, brush$ymax)
       
       # value is either "Genre" or "Network"
@@ -60,6 +61,7 @@ shinyServer(function(input, output){
       
       # the name of the genre or network that is zoomed
       detailPlot$ofType <- brush$panelvar1
+      
       
       if(detailPlot$facet == "Genre"){
         data <- masterInfo[["genre_data"]]
@@ -72,18 +74,48 @@ shinyServer(function(input, output){
       detailPlot$title = paste(detailPlot$ofType, ": ", detailPlot$yAxis, " by ", detailPlot$xAxis)
       detailPlot$ptColor = masterInfo[["namedColors"]][detailPlot$ofType]
       
+      output$dataTable <- renderDataTable({
+        if(detailPlot$yAxis == "`Median Rating`"){
+          yAxis <- "Rating"
+          yRange <- detailPlot$yRange
+        } else if(detailPlot$yAxis == "`Median Number of Years`"){
+          yAxis <- "`Number of Years`"
+          yRange <- detailPlot$yRange
+        } else {
+          yAxis <- "Year" # not really
+          yRange <- c(1920, 2020)
+        }
+        
+        d <- masterInfo[["all_data"]]
+        d <- d[d[detailPlot$facet]==detailPlot$ofType,]
+        d <- d %>%
+          filter(Year >= detailPlot$xRange[1] & Year <= detailPlot$xRange[2]) %>%
+          filter_(paste(yAxis, ">=", yRange[1], "&", yAxis, "<=", yRange[2])) %>%
+          arrange(Year, desc(Votes))
+        
+        datatable(
+          d,
+          options = list(
+            processing = FALSE,
+            searching = FALSE,
+            paging=FALSE
+            #ordering=FALSE
+          ),
+          selection="none",
+          rownames = FALSE
+        )
+      })
+      
     } else {
       detailPlot$data = NULL
       detailPlot$title = NULL
-      detailPlot$xAxis = NULL
-      detailPlot$yAxis = NULL
-      detailPlot$xRange = NULL
-      detailPlot$yRange = NULL
-      detailPlot$ptColor = NULL
-      detailPlot$facet = NULL
-      detailPlot$ofType = NULL
+      # detailPlot$xAxis = NULL
+      # detailPlot$yAxis = NULL
+      # detailPlot$xRange = NULL
+      # detailPlot$yRange = NULL
+      # detailPlot$ptColor = NULL
+      # detailPlot$facet = NULL
+       detailPlot$ofType = "blank"
     }
   })
-  
-
 })
