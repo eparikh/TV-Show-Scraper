@@ -50,6 +50,7 @@ shinyUI(fluidPage(
       plotOutput("detailPlot", height = "600px")
     )
   ),# end row
+  br(),br(),
   fluidRow(
     column(
       12,
