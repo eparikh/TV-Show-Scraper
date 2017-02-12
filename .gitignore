@@ -2,6 +2,7 @@
 *output/
 *input/
 *processing/
+*presentation/
 
 *.pyc
 *.txt
