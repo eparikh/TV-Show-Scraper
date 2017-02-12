@@ -4,36 +4,47 @@ library(shiny)
 
 source("helpers.R")
 
-facetPlots <- getFacetPlots()
+#master plot, table data, and group color info
+masterInfo <- getFacetPlotsAndData()
 
 shinyServer(function(input, output){
   
-  thePlot <- reactive({facetPlots[[input$plotType]]})
+  thePlot <- reactive({masterInfo[[input$plotType]]})
+  
+  # set detailPlot$data = NULL if the plot changes
+  # only want data for detailPlot to be retrieved when a plot is zoomed
+  observeEvent(thePlot(),{
+    detailPlot$data <- NULL
+  })
   
   # plot the master scatter plot w/ facet wrap
   output$facetPlot <- renderPlot(thePlot())
   
   output$detailPlot <- renderPlot({
-    if(!is.na(detailPlot$title)){
+    if(!is.null(detailPlot$data)){
       getDetailPlot(
         detailPlot$data,
         detailPlot$title,
         detailPlot$xAxis,
         detailPlot$yAxis,
         detailPlot$xRange,
-        detailPlot$yRange
+        detailPlot$yRange,
+        detailPlot$ptColor
       )
     }
   })
   
   # get chosen values from master plot
   detailPlot <- reactiveValues(
-    xAxis = NA,
-    yAxis = NA,
-    xRange = NA,
-    yRange = NA,
-    title = NA,
-    data = NA
+    data = NULL,
+    title = NULL,
+    xAxis = NULL,
+    yAxis = NULL,
+    xRange = NULL,
+    yRange = NULL,
+    ptColor = NULL,
+    facet = NULL,
+    ofType = NULL
   )
   
   observe({
@@ -44,19 +55,33 @@ shinyServer(function(input, output){
       detailPlot$xRange = c(brush$xmin, brush$xmax)
       detailPlot$yRange = c(brush$ymin, brush$ymax)
       
-      facet <- brush$mapping$panelvar1
-      ofType <- brush$panelvar1
+      # value is either "Genre" or "Network"
+      detailPlot$facet <- brush$mapping$panelvar1
       
-      detailPlot$title = paste(ofType, ": ", detailPlot$yAxis, " by ", detailPlot$xAxis)
-      detailPlot$data = thePlot()$data[thePlot()$data[facet]==ofType,]
+      # the name of the genre or network that is zoomed
+      detailPlot$ofType <- brush$panelvar1
+      
+      if(detailPlot$facet == "Genre"){
+        data <- masterInfo[["genre_data"]]
+      }else {
+        data <- masterInfo[["network_data"]]
+      }
+      
+      detailPlot$data = data[data[detailPlot$facet]==detailPlot$ofType,]
+      
+      detailPlot$title = paste(detailPlot$ofType, ": ", detailPlot$yAxis, " by ", detailPlot$xAxis)
+      detailPlot$ptColor = masterInfo[["namedColors"]][detailPlot$ofType]
       
     } else {
-      detailPlot$xAxis = NA
-      detailPlot$yAxis = NA
-      detailPlot$xRange = NA
-      detailPlot$yRange = NA
-      detailPlot$title = NA
-      detailPlot$data = NA
+      detailPlot$data = NULL
+      detailPlot$title = NULL
+      detailPlot$xAxis = NULL
+      detailPlot$yAxis = NULL
+      detailPlot$xRange = NULL
+      detailPlot$yRange = NULL
+      detailPlot$ptColor = NULL
+      detailPlot$facet = NULL
+      detailPlot$ofType = NULL
     }
   })
   

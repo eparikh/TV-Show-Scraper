@@ -32,7 +32,7 @@ shinyUI(fluidPage(
   ), # end row
   fluidRow(
     column(
-      7,
+      6,
       plotOutput(
         "facetPlot",
         height = "600px",
@@ -43,7 +43,7 @@ shinyUI(fluidPage(
       )# end plot
     ),# end column
     column(
-      5,
+      6,
       plotOutput("detailPlot", height = "600px")
     )
   )# end row
