@@ -3,6 +3,7 @@
 *input/
 *processing/
 *presentation/
+*rsconnect/
 
 *.pyc
 *.txt

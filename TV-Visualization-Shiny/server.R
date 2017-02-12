@@ -93,6 +93,10 @@ shinyServer(function(input, output){
           filter_(paste(yAxis, ">=", yRange[1], "&", yAxis, "<=", yRange[2])) %>%
           arrange(Year, desc(Votes))
         
+        if(detailPlot$facet == "Network"){
+          d <- d %>% select(-Genre) %>% unique()
+        }
+        
         datatable(
           d,
           options = list(
