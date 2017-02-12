@@ -19,9 +19,11 @@ getFacetPlotsAndData <- function(){
     genre_count = createFacetPlot(data$genre, "Year", "Count", "Genre"),
     genre_rating = createFacetPlot(data$genre, "Year", "Median Rating", "Genre"),
     genre_years = createFacetPlot(data$genre, "Year", "Median Number of Years", "Genre"),
+    genre_votes = createFacetPlot(data$genre, "Year", "Total Votes", "Genre"),
     network_count = createFacetPlot(data$network, "Year", "Count", "Network"),
     network_rating = createFacetPlot(data$network, "Year", "Median Rating", "Network"),
     network_years = createFacetPlot(data$network, "Year", "Median Number of Years", "Network"),
+    network_votes = createFacetPlot(data$network, "Year", "Total Votes", "Network"),
     all_data = data$genre_all,
     namedColors = namedColors,
     genre_data = data$genre,
@@ -39,7 +41,7 @@ getData <- function(){
   df_final <- read.csv("data/df_final.csv", stringsAsFactors = F)
   df_final["original_network"] <- lapply(df_final["original_network"], factor)
   
-  genre_year <- df_genres %>% group_by(genre, start_year) %>% summarise(`Median Number of Years`=median(num_years, na.rm=T), `Median Rating`=median(rating, na.rm=T), Count=n())
+  genre_year <- df_genres %>% group_by(start_year, genre) %>% summarise(`Median Number of Years`=median(num_years, na.rm=T), `Median Rating`=median(rating, na.rm=T), `Total Votes`=sum(votes, na.rm=TRUE), Count=n())
   #bad_genres <- c("anthology", "biography", "news", "history", "horror", "music", "musical", "short", "sport", "talk-show", "western", "war", "game-show", "documentary", "fantasy")
   #bad_genres <- c("")
   bad_genres <- c("anthology", "biography", "short", "sport", "war", "musical", "western")
@@ -47,15 +49,15 @@ getData <- function(){
   genre_year <- genre_year %>% filter(!(genre %in% bad_genres))
   genre_year <- genre_year %>% rename(Year=start_year, Genre=genre)
   
-  network_year <- df_final %>% group_by(original_network, start_year) %>% summarise(`Median Number of Years`=median(num_years, na.rm=T),`Median Rating`=median(rating, na.rm=T), Count=n())
+  network_year <- df_final %>% group_by(start_year, original_network) %>% summarise(`Median Number of Years`=median(num_years, na.rm=T),`Median Rating`=median(rating, na.rm=T), `Total Votes`=sum(votes, na.rm=TRUE), Count=n())
   top_networks_df <- (df_final %>% filter(original_network != "none") %>% group_by(original_network) %>% summarise(count=n()) %>% arrange(desc(count)) %>% top_n(20, count))
   top_networks_vec <- top_networks_df[["original_network"]]
   network_year <- network_year %>% filter(original_network %in% top_networks_vec)
   network_year <- network_year %>% rename(Network=original_network, Year=start_year)
   
   return(list(
-    genre = genre_year,
-    network = network_year,
+    genre = genre_year %>% unique(),
+    network = network_year %>% unique(),
     genre_all = df_genres %>%
       select(
         Year=start_year,
@@ -66,7 +68,8 @@ getData <- function(){
         Rating = rating,
         Votes = votes
       ) %>%
-      filter(!is.na(Rating))
+      filter(!is.na(Rating)) %>%
+      unique()
   ))
 }
 

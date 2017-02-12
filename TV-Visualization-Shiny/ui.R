@@ -20,12 +20,14 @@ shinyUI(fluidPage(
             Genre = c(
               "Count of Shows" = "genre_count",
               "Median Rating" = "genre_rating",
-              "Median Number of Years" = "genre_years"
+              "Median Number of Years" = "genre_years",
+              "Total Votes" = "genre_votes"
             ),
             Network = c(
               "Count of Shows" = "network_count",
               "Median Rating" = "network_rating",
-              "Median Number of Years" = "network_years"
+              "Median Number of Years" = "network_years",
+              "Total Votes" = "network_votes"
             )
           )
           )
