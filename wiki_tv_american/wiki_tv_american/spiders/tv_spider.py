@@ -26,7 +26,7 @@ class TVSpider(Spider):
 		# tv show urls from start_url 2
 		urls = response.xpath("//i//a/@href").extract()
 
-		# to manually read urls from a filed
+		# to manually read urls from a file
 		# with open("input/urls.csv", "r") as f:
 		# 	urls = [line.strip() for line in f.readlines()]
 
